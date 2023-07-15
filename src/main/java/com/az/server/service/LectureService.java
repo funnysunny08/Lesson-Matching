@@ -30,6 +30,7 @@ public class LectureService {
         return CreateLectureResponseDto.of(newLecture.getCreatedAt());
     }
 
+    @Transactional
     public List<LectureResponseDto> getAllLecture() {
         List<LectureResponseDto> output = new ArrayList<>();
 
@@ -37,6 +38,7 @@ public class LectureService {
         return getLectureResponseDtos(output, lectures);
     }
 
+    @Transactional
     public List<LectureResponseDto> getLectureBySubject(String subject) {
         List<LectureResponseDto> output = new ArrayList<>();
 

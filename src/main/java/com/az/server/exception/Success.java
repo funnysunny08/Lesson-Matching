@@ -21,6 +21,7 @@ public enum Success {
     LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
     SIGNUP_SUCCESS(HttpStatus.CREATED, "회원가입이 완료됐습니다."),
     CREATE_LECTURE_SUCCESS(HttpStatus.CREATED, "과외 등록에 성공했습니다."),
+    CREATE_MATCHING_LECTURE_SUCCESS(HttpStatus.CREATED, "과외 매칭 신청에 성공했습니다."),
 
     /**
      * 204 NO CONTENT

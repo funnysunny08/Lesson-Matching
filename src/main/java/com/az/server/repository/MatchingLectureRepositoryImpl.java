@@ -26,8 +26,8 @@ public class MatchingLectureRepositoryImpl implements MatchingLectureRepository 
 
     @Override
     public MatchingLecture insert(MatchingLecture matchingLecture) {
-        jdbcTemplate.update("INSERT INTO matching_lecture(matching_lecture_id, lecture_id, student_id, status, created_at) " +
-                        "VALUES (:matching_lecture_id, :lecture_id, :student_id, :status, :createdAt)",
+        jdbcTemplate.update("INSERT INTO matching_lecture(lecture_id, student_id, status, created_at) " +
+                        "VALUES (:lectureId, :studentId, :status, :createdAt)",
                 toParamMap(matchingLecture));
         return matchingLecture;
     }
@@ -92,7 +92,7 @@ public class MatchingLectureRepositoryImpl implements MatchingLectureRepository 
         paramMap.put("matchingLectureId", matchingLecture.getMatchingLectureId());
         paramMap.put("lectureId", matchingLecture.getLectureId());
         paramMap.put("studentId", matchingLecture.getStudentId());
-        paramMap.put("matchingStatus", matchingLecture.getMatchingStatus().toString());
+        paramMap.put("status", matchingLecture.getMatchingStatus().toString());
         paramMap.put("createdAt", matchingLecture.getCreatedAt());
         return paramMap;
     }
