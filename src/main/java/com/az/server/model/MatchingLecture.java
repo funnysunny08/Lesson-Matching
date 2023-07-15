@@ -3,6 +3,7 @@ package com.az.server.model;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatchingLecture {
     private Long matchingLectureId;
+    @Setter
     private MatchingStatus matchingStatus;
     private Long lectureId;
     private Long studentId;
