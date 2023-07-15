@@ -1,16 +1,17 @@
 package com.az.server.service;
 
 import com.az.server.controller.request.CreateMatchingRequestDto;
+import com.az.server.controller.request.UpdateMatchingStatusRequestDto;
 import com.az.server.controller.response.CreateMatchingResponseDto;
 import com.az.server.controller.response.UpdateMatchingStatusResponseDto;
 import com.az.server.exception.Error;
 import com.az.server.exception.model.BadRequestException;
 import com.az.server.exception.model.NotFoundException;
-import com.az.server.model.MatchingLecture;
-import com.az.server.model.MatchingStatus;
-import com.az.server.model.Student;
+import com.az.server.model.*;
+import com.az.server.repository.LectureRepository;
 import com.az.server.repository.MatchingLectureRepository;
 import com.az.server.repository.StudentRepository;
+import com.az.server.repository.TutorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,8 @@ import java.util.Objects;
 public class MatchingLectureService {
     private final MatchingLectureRepository matchingLectureRepository;
     private final StudentRepository studentRepository;
+    private final TutorRepository tutorRepository;
+    private final LectureRepository lectureRepository;
 
     @Transactional
     public CreateMatchingResponseDto createMatching(CreateMatchingRequestDto requestDto) {
@@ -34,9 +37,9 @@ public class MatchingLectureService {
     @Transactional
     public UpdateMatchingStatusResponseDto updateStatusForStudent(Long studentId, Long matchingLectureId) {
         MatchingLecture matchingLecture = matchingLectureRepository.findById(matchingLectureId)
-                        .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_MATCHING_LECTURE, Error.NOT_FOUND_MATCHING_LECTURE.getMessage()));
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_MATCHING_LECTURE, Error.NOT_FOUND_MATCHING_LECTURE.getMessage()));
 
-        if (!Objects.equals(matchingLecture.getStudentId(), studentId) || matchingLecture.getMatchingStatus() == MatchingStatus.REFUSED)
+        if (!Objects.equals(matchingLecture.getStudentId(), studentId) || matchingLecture.getMatchingStatus() != MatchingStatus.PENDING)
             throw new BadRequestException(Error.REQUEST_VALIDATION_EXCEPTION, Error.REQUEST_VALIDATION_EXCEPTION.getMessage());
 
         matchingLecture.setMatchingStatus(MatchingStatus.REFUSED);
@@ -44,5 +47,24 @@ public class MatchingLectureService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         return UpdateMatchingStatusResponseDto.of(student.getName(), "학생", matchingLecture.getMatchingStatus().getName());
+    }
+
+    @Transactional
+    public UpdateMatchingStatusResponseDto updateStatusForTutor(Long tutorId, Long matchingLectureId, MatchingStatus status) {
+        MatchingLecture matchingLecture = matchingLectureRepository.findById(matchingLectureId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_MATCHING_LECTURE, Error.NOT_FOUND_MATCHING_LECTURE.getMessage()));
+
+        Tutor tutor = tutorRepository.findById(tutorId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        Lecture lecture = lectureRepository.findById(matchingLecture.getLectureId())
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_LECTURE_EXCEPTION, Error.NOT_FOUND_LECTURE_EXCEPTION.getMessage()));
+
+        if (!Objects.equals(lecture.getTutorId(), tutorId) || matchingLecture.getMatchingStatus() != MatchingStatus.PENDING)
+            throw new BadRequestException(Error.REQUEST_VALIDATION_EXCEPTION, Error.REQUEST_VALIDATION_EXCEPTION.getMessage());
+        matchingLecture.setMatchingStatus(status);
+        matchingLectureRepository.updateByStatus(matchingLecture);
+
+        return UpdateMatchingStatusResponseDto.of(tutor.getName(), "튜터", matchingLecture.getMatchingStatus().getName());
     }
 }
