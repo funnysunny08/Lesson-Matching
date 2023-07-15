@@ -1,11 +1,7 @@
 package com.az.server.service;
 
 import com.az.server.controller.request.CreateMatchingRequestDto;
-import com.az.server.controller.request.UpdateMatchingStatusRequestDto;
-import com.az.server.controller.response.CreateMatchingResponseDto;
-import com.az.server.controller.response.GetAllMatchingResponseDto;
-import com.az.server.controller.response.LectureResponseDto;
-import com.az.server.controller.response.UpdateMatchingStatusResponseDto;
+import com.az.server.controller.response.*;
 import com.az.server.exception.Error;
 import com.az.server.exception.model.BadRequestException;
 import com.az.server.exception.model.NotFoundException;
@@ -22,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,5 +78,22 @@ public class MatchingLectureService {
         return matchingLectures.stream()
                 .map(matchingLecture -> GetAllMatchingResponseDto.of(matchingLecture.getMatchingLectureId(), matchingLecture.getMatchingStatus().getName()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public GetMatchingResponseDto getOneMatching(Long matchingLectureId) {
+        MatchingLecture matchingLecture = matchingLectureRepository.findById(matchingLectureId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_MATCHING_LECTURE, Error.NOT_FOUND_MATCHING_LECTURE.getMessage()));
+
+        Lecture lecture = lectureRepository.findById(matchingLecture.getLectureId())
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_LECTURE_EXCEPTION, Error.NOT_FOUND_LECTURE_EXCEPTION.getMessage()));
+
+        Student student = studentRepository.findById(matchingLecture.getStudentId())
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        Tutor tutor = tutorRepository.findById(lecture.getTutorId())
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        return GetMatchingResponseDto.of(matchingLectureId, tutor.getTutorId(), tutor.getName(), student.getStudentId(), student.getName(), lecture.getSubject(), lecture.getRegion(), lecture.getPrice(), lecture.getNumberOfWeek(), matchingLecture.getMatchingStatus().getName());
     }
 }

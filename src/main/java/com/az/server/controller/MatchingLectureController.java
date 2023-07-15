@@ -5,6 +5,7 @@ import com.az.server.controller.request.CreateMatchingRequestDto;
 import com.az.server.controller.request.UpdateMatchingStatusRequestDto;
 import com.az.server.controller.response.CreateMatchingResponseDto;
 import com.az.server.controller.response.GetAllMatchingResponseDto;
+import com.az.server.controller.response.GetMatchingResponseDto;
 import com.az.server.controller.response.UpdateMatchingStatusResponseDto;
 import com.az.server.exception.Error;
 import com.az.server.exception.Success;
@@ -28,6 +29,12 @@ public class MatchingLectureController {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<List<GetAllMatchingResponseDto>> getAllMatching() {
         return ApiResponse.success(Success.GET_MATCHING_LECTURE_SUCCESS, matchingLectureService.getAllMatching());
+    }
+
+    @GetMapping("/{matchingLectureId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<GetMatchingResponseDto> getOneMatching(@PathVariable Long matchingLectureId) {
+        return ApiResponse.success(Success.GET_MATCHING_LECTURE_SUCCESS, matchingLectureService.getOneMatching(matchingLectureId));
     }
 
     @PostMapping("")
