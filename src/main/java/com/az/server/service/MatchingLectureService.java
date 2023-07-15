@@ -3,6 +3,8 @@ package com.az.server.service;
 import com.az.server.controller.request.CreateMatchingRequestDto;
 import com.az.server.controller.request.UpdateMatchingStatusRequestDto;
 import com.az.server.controller.response.CreateMatchingResponseDto;
+import com.az.server.controller.response.GetAllMatchingResponseDto;
+import com.az.server.controller.response.LectureResponseDto;
 import com.az.server.controller.response.UpdateMatchingStatusResponseDto;
 import com.az.server.exception.Error;
 import com.az.server.exception.model.BadRequestException;
@@ -17,7 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,5 +72,16 @@ public class MatchingLectureService {
         matchingLectureRepository.updateByStatus(matchingLecture);
 
         return UpdateMatchingStatusResponseDto.of(tutor.getName(), "튜터", matchingLecture.getMatchingStatus().getName());
+    }
+
+    @Transactional
+    public List<GetAllMatchingResponseDto> getAllMatching() {
+        List<LectureResponseDto> output = new ArrayList<>();
+
+        List<MatchingLecture> matchingLectures = matchingLectureRepository.findAll();
+
+        return matchingLectures.stream()
+                .map(matchingLecture -> GetAllMatchingResponseDto.of(matchingLecture.getMatchingLectureId(), matchingLecture.getMatchingStatus().getName()))
+                .collect(Collectors.toList());
     }
 }

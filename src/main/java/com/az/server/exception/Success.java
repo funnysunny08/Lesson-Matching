@@ -14,6 +14,7 @@ public enum Success {
      */
     GET_USER_SUCCESS(HttpStatus.OK, "유저 조회 성공"),
     GET_LECTURE_SUCCESS(HttpStatus.OK, "과외 조회 성공"),
+    GET_MATCHING_LECTURE_SUCCESS(HttpStatus.OK, "과외 매칭 조회 성공"),
 
     /**
      * 201 CREATED

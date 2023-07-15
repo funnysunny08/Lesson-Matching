@@ -4,6 +4,7 @@ import com.az.server.common.dto.ApiResponse;
 import com.az.server.controller.request.CreateMatchingRequestDto;
 import com.az.server.controller.request.UpdateMatchingStatusRequestDto;
 import com.az.server.controller.response.CreateMatchingResponseDto;
+import com.az.server.controller.response.GetAllMatchingResponseDto;
 import com.az.server.controller.response.UpdateMatchingStatusResponseDto;
 import com.az.server.exception.Error;
 import com.az.server.exception.Success;
@@ -14,12 +15,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/matching-lecture")
 public class MatchingLectureController {
 
     private final MatchingLectureService matchingLectureService;
+
+    @GetMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<List<GetAllMatchingResponseDto>> getAllMatching() {
+        return ApiResponse.success(Success.GET_MATCHING_LECTURE_SUCCESS, matchingLectureService.getAllMatching());
+    }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
