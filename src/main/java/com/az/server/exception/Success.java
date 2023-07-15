@@ -12,20 +12,15 @@ public enum Success {
     /**
      * 200 OK
      */
-    GET_RECOMMEND_LIST_SUCCESS(HttpStatus.OK, "추천 위니 전체 조회 성공"),
-    GET_FEED_LIST_SUCCESS(HttpStatus.OK, "피드 전체 조회 성공"),
     GET_USER_SUCCESS(HttpStatus.OK, "유저 조회 성공"),
-    GET_MYFEED_SUCCESS(HttpStatus.OK, "마이 피드 조회 성공"),
+    GET_LECTURE_SUCCESS(HttpStatus.OK, "과외 조회 성공"),
 
     /**
      * 201 CREATED
      */
     LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
     SIGNUP_SUCCESS(HttpStatus.CREATED, "회원가입이 완료됐습니다."),
-    CREATE_BOARD_SUCCESS(HttpStatus.CREATED, "게시물 생성이 완료됐습니다."),
-    CREATE_GOAL_SUCCESS(HttpStatus.CREATED, "목표 생성이 완료됐습니다."),
-    CREATE_FEED_RESPONSE_SUCCESS(HttpStatus.CREATED, "피드 반응 생성이 완료됐습니다."),
-    CREATE_LECTURE_SUCCESS(HttpStatus.CREATED, "과외 등록이 성공했습니다."),
+    CREATE_LECTURE_SUCCESS(HttpStatus.CREATED, "과외 등록에 성공했습니다."),
 
     /**
      * 204 NO CONTENT

@@ -3,11 +3,14 @@ package com.az.server.controller;
 import com.az.server.common.dto.ApiResponse;
 import com.az.server.controller.request.CreateLectureRequestDto;
 import com.az.server.controller.response.CreateLectureResponseDto;
+import com.az.server.controller.response.LectureResponseDto;
 import com.az.server.exception.Success;
 import com.az.server.service.LectureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +26,12 @@ public class LectureController {
             @RequestBody CreateLectureRequestDto requestDto
     ) {
         return ApiResponse.success(Success.CREATE_LECTURE_SUCCESS, lectureService.createLecture(tutorId, requestDto));
+    }
+
+    @GetMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<List<LectureResponseDto>> getAllLecture() {
+        return ApiResponse.success(Success.GET_LECTURE_SUCCESS, lectureService.getAllLecture());
     }
 
 
