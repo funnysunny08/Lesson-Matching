@@ -34,5 +34,11 @@ public class LectureController {
         return ApiResponse.success(Success.GET_LECTURE_SUCCESS, lectureService.getAllLecture());
     }
 
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<List<LectureResponseDto>> getLectureBySubject(@RequestParam String subject) {
+        return ApiResponse.success(Success.GET_LECTURE_SUCCESS, lectureService.getLectureBySubject(subject));
+    }
+
 
 }

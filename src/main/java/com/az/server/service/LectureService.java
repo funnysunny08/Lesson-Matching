@@ -34,6 +34,17 @@ public class LectureService {
         List<LectureResponseDto> output = new ArrayList<>();
 
         List<Lecture> lectures = lectureRepository.findAll();
+        return getLectureResponseDtos(output, lectures);
+    }
+
+    public List<LectureResponseDto> getLectureBySubject(String subject) {
+        List<LectureResponseDto> output = new ArrayList<>();
+
+        List<Lecture> lectures = lectureRepository.findBySubject(subject);
+        return getLectureResponseDtos(output, lectures);
+    }
+
+    private List<LectureResponseDto> getLectureResponseDtos(List<LectureResponseDto> output, List<Lecture> lectures) {
         lectures.forEach(lecture -> {
             Tutor tutor = tutorRepository.findById(lecture.getTutorId())
                     .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_LECTURE_EXCEPTION, Error.NOT_FOUND_LECTURE_EXCEPTION.getMessage()));
