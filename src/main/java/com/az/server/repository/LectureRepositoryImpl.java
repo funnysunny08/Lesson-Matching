@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.az.server.util.JdbcUtils.toLocalDateTime;
-import static com.az.server.util.JdbcUtils.toUUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,8 +22,8 @@ public class LectureRepositoryImpl implements LectureRepository {
 
     @Override
     public Lecture insert(Lecture lecture) {
-        jdbcTemplate.update("INSERT INTO lecture(lecture_id, subject, region, price, number_of_week, tutor_id, created_at) " +
-                        "VALUES (UUID_TO_BIN(:lectureId), :subject, :region, :price, :numberOfWeek, :tutorId, :createdAt)",
+        jdbcTemplate.update("INSERT INTO lecture(subject, region, price, number_of_week, tutor_id, created_at) " +
+                        "VALUES (:subject, :region, :price, :numberOfWeek, :tutorId, :createdAt)",
                 toParamMap(lecture));
         return lecture;
     }
@@ -65,26 +64,19 @@ public class LectureRepositoryImpl implements LectureRepository {
     }
 
     private static final RowMapper<Lecture> lectureRowMapper = (resultSet, i) -> {
-        UUID lectureId = toUUID(resultSet.getBytes("lecture_id"));
+        Long lectureId = resultSet.getLong("lecture_id");
         String subject = resultSet.getString("subject");
         String region = resultSet.getString("region");
         int price = resultSet.getInt("price");
         int numberOfWeek = resultSet.getInt("number_of_week");
-        UUID tutorId = toUUID(resultSet.getBytes("tutor_id"));
+        Long tutorId = resultSet.getLong("tutor_id");
         LocalDateTime createdAt = toLocalDateTime(resultSet.getTimestamp("created_at"));
-        return Lecture.builder()
-                .lectureId(lectureId)
-                .subject(subject)
-                .region(region)
-                .price(price)
-                .numberOfWeek(numberOfWeek)
-                .tutorId(tutorId)
-                .createdAt(createdAt).build();
+        return new Lecture(lectureId, subject, region, price, numberOfWeek,tutorId, createdAt);
     };
 
     private Map<String, Object> toParamMap(Lecture lecture) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("lectureId", lecture.getLectureId().toString().getBytes());
+        paramMap.put("lectureId", lecture.getLectureId());
         paramMap.put("subject", lecture.getSubject());
         paramMap.put("region", lecture.getRegion());
         paramMap.put("price", lecture.getPrice());

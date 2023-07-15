@@ -25,6 +25,7 @@ public enum Success {
     CREATE_BOARD_SUCCESS(HttpStatus.CREATED, "게시물 생성이 완료됐습니다."),
     CREATE_GOAL_SUCCESS(HttpStatus.CREATED, "목표 생성이 완료됐습니다."),
     CREATE_FEED_RESPONSE_SUCCESS(HttpStatus.CREATED, "피드 반응 생성이 완료됐습니다."),
+    CREATE_LECTURE_SUCCESS(HttpStatus.CREATED, "과외 등록이 성공했습니다."),
 
     /**
      * 204 NO CONTENT

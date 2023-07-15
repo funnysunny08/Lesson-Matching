@@ -1,23 +1,30 @@
 package com.az.server.model;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Lecture {
-    private final UUID lectureId;
-    private final String subject;
-    private final String region;
-    private final int price;
-    private final int numberOfWeek;
-    private final UUID tutorId;
-    private final LocalDateTime createdAt;
+    private Long lectureId;
+    private String subject;
+    private String region;
+    private int price;
+    private int numberOfWeek;
+    private Long tutorId;
+    private LocalDateTime createdAt;
 
-    @Builder
-    public Lecture(UUID lectureId, String subject, String region, int price, int numberOfWeek, UUID tutorId, LocalDateTime createdAt) {
+    public Lecture(String subject, String region, int price, int numberOfWeek, Long tutorId, LocalDateTime createdAt) {
+        this.subject = subject;
+        this.region = region;
+        this.price = price;
+        this.numberOfWeek = numberOfWeek;
+        this.tutorId = tutorId;
+        this.createdAt = createdAt;
+    }
+
+    public Lecture(Long lectureId, String subject, String region, int price, int numberOfWeek, Long tutorId, LocalDateTime createdAt) {
         this.lectureId = lectureId;
         this.subject = subject;
         this.region = region;
