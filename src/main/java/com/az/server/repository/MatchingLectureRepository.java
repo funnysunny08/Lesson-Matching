@@ -5,18 +5,17 @@ import com.az.server.model.MatchingStatus;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface MatchingLectureRepository {
     // CREATE
     MatchingLecture insert(MatchingLecture matchingLecture);
 
     // READ
-    List<MatchingLecture> findByTutorId(UUID tutorId);
+    List<MatchingLecture> findByTutorId(Long tutorId);
 
-    List<MatchingLecture> findByStudentId(UUID studentId);
+    List<MatchingLecture> findByStudentId(Long studentId);
 
-    Optional<MatchingLecture> findById(UUID matchingLectureId);
+    Optional<MatchingLecture> findById(Long matchingLectureId);
 
     List<MatchingLecture> findAll();
 

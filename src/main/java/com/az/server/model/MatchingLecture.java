@@ -1,22 +1,29 @@
 package com.az.server.model;
 
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatchingLecture {
-    private final UUID matchingLectureId;
-    private final MatchingStatus matchingStatus;
-    private final UUID lectureId;
-    private final UUID studentId;
-    private final LocalDateTime createdAt;
+    private Long matchingLectureId;
+    private MatchingStatus matchingStatus;
+    private Long lectureId;
+    private Long studentId;
+    private LocalDateTime createdAt;
 
-    @Builder
-    public MatchingLecture(UUID matchingLectureId, MatchingStatus matchingStatus, UUID lectureId, UUID studentId, LocalDateTime createdAt) {
+    public MatchingLecture(Long matchingLectureId, MatchingStatus matchingStatus, Long lectureId, Long studentId, LocalDateTime createdAt) {
         this.matchingLectureId = matchingLectureId;
+        this.matchingStatus = matchingStatus;
+        this.lectureId = lectureId;
+        this.studentId = studentId;
+        this.createdAt = createdAt;
+    }
+
+    public MatchingLecture(MatchingStatus matchingStatus, Long lectureId, Long studentId, LocalDateTime createdAt) {
         this.matchingStatus = matchingStatus;
         this.lectureId = lectureId;
         this.studentId = studentId;

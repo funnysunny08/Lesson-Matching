@@ -12,12 +12,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.az.server.util.JdbcUtils.toLocalDateTime;
-import static com.az.server.util.JdbcUtils.toUUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,38 +27,38 @@ public class MatchingLectureRepositoryImpl implements MatchingLectureRepository 
     @Override
     public MatchingLecture insert(MatchingLecture matchingLecture) {
         jdbcTemplate.update("INSERT INTO matching_lecture(matching_lecture_id, lecture_id, student_id, status, created_at) " +
-                        "VALUES (UUID_TO_BIN(:matching_lecture_id), UUID_TO_BIN(:lecture_id), UUID_TO_BIN(:student_id), :status, :createdAt)",
+                        "VALUES (:matching_lecture_id, :lecture_id, :student_id, :status, :createdAt)",
                 toParamMap(matchingLecture));
         return matchingLecture;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<MatchingLecture> findByTutorId(UUID tutorId) {
+    public List<MatchingLecture> findByTutorId(Long tutorId) {
         List<MatchingLecture> matchingLectures = new ArrayList<>();
         List<Lecture> lectures = lectureRepository.findByTutorId(tutorId);
         lectures.forEach(lecture -> {
-            matchingLectures.addAll(jdbcTemplate.query("SELECT * FROM matching_lecture WHERE lecture_id = UUID_TO_BIN(:lectureId)",
-                    Collections.singletonMap("lectureId", lecture.getLectureId().toString().getBytes()), matchingLectureRowMapper
+            matchingLectures.addAll(jdbcTemplate.query("SELECT * FROM matching_lecture WHERE lecture_id = :lectureId",
+                    Collections.singletonMap("lectureId", lecture.getLectureId()), matchingLectureRowMapper
             ));
         });
         return matchingLectures;
     }
 
     @Override
-    public List<MatchingLecture> findByStudentId(UUID studentId) {
-        return jdbcTemplate.query("SELECT * FROM matching_lecture WHERE student_id = UUID_TO_BIN(:studentId)",
-                Collections.singletonMap("studentId", studentId.toString().getBytes()),
+    public List<MatchingLecture> findByStudentId(Long studentId) {
+        return jdbcTemplate.query("SELECT * FROM matching_lecture WHERE student_id = :studentId",
+                Collections.singletonMap("studentId", studentId),
                 matchingLectureRowMapper
-            );
+        );
     }
 
     @Override
-    public Optional<MatchingLecture> findById(UUID matchingLectureId) {
+    public Optional<MatchingLecture> findById(Long matchingLectureId) {
         try {
             return Optional.ofNullable(
-                    jdbcTemplate.queryForObject("SELECT * FROM matching_lecture WHERE matching_lecture_id = UUID_TO_BIN(:matchingLectureId)",
-                            Collections.singletonMap("matchingLectureId", matchingLectureId.toString().getBytes()), matchingLectureRowMapper)
+                    jdbcTemplate.queryForObject("SELECT * FROM matching_lecture WHERE matching_lecture_id = :matchingLectureId",
+                            Collections.singletonMap("matchingLectureId", matchingLectureId), matchingLectureRowMapper)
             );
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException(Error.NOT_FOUND_MATCHING_LECTURE, Error.NOT_FOUND_MATCHING_LECTURE.getMessage());
@@ -74,31 +72,26 @@ public class MatchingLectureRepositoryImpl implements MatchingLectureRepository 
 
     @Override
     public MatchingLecture updateByStatus(MatchingLecture matchingLecture) {
-        jdbcTemplate.update("UPDATE matching_lecture SET status = :status WHERE matching_lecture_id = UUID_TO_BIN(:matchingLectureId)",
+        jdbcTemplate.update("UPDATE matching_lecture SET status = :status WHERE matching_lecture_id = :matchingLectureId",
                 toParamMap(matchingLecture)
         );
         return matchingLecture;
     }
 
     private static final RowMapper<MatchingLecture> matchingLectureRowMapper = (resultSet, i) -> {
-        UUID matchingLectureId = toUUID(resultSet.getBytes("matching_lecture_id"));
-        UUID lectureId = toUUID(resultSet.getBytes("lecture_id"));
-        UUID studentId = toUUID(resultSet.getBytes("student_id"));
+        Long matchingLectureId = resultSet.getLong("matching_lecture_id");
+        Long lectureId = resultSet.getLong("lecture_id");
+        Long studentId = resultSet.getLong("student_id");
         MatchingStatus matchingStatus = MatchingStatus.valueOf(resultSet.getString("status"));
         LocalDateTime createdAt = toLocalDateTime(resultSet.getTimestamp("created_at"));
-        return MatchingLecture.builder()
-                .matchingLectureId(matchingLectureId)
-                .lectureId(lectureId)
-                .studentId(studentId)
-                .matchingStatus(matchingStatus)
-                .createdAt(createdAt).build();
+        return new MatchingLecture(matchingLectureId, matchingStatus, lectureId, studentId, createdAt);
     };
 
     private Map<String, Object> toParamMap(MatchingLecture matchingLecture) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("matchingLectureId", matchingLecture.getMatchingLectureId().toString().getBytes());
-        paramMap.put("lectureId", matchingLecture.getLectureId().toString().getBytes());
-        paramMap.put("studentId", matchingLecture.getStudentId().toString().getBytes());
+        paramMap.put("matchingLectureId", matchingLecture.getMatchingLectureId());
+        paramMap.put("lectureId", matchingLecture.getLectureId());
+        paramMap.put("studentId", matchingLecture.getStudentId());
         paramMap.put("matchingStatus", matchingLecture.getMatchingStatus().toString());
         paramMap.put("createdAt", matchingLecture.getCreatedAt());
         return paramMap;

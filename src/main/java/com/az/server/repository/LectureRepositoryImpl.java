@@ -29,11 +29,11 @@ public class LectureRepositoryImpl implements LectureRepository {
     }
 
     @Override
-    public Optional<Lecture> findById(UUID lectureId) {
+    public Optional<Lecture> findById(Long lectureId) {
         try {
             return Optional.ofNullable(
-                    jdbcTemplate.queryForObject("SELECT * FROM lecture WHERE lecture_id = UUID_TO_BIN(:lectureId)",
-                            Collections.singletonMap("lectureId", lectureId.toString().getBytes()), lectureRowMapper)
+                    jdbcTemplate.queryForObject("SELECT * FROM lecture WHERE lecture_id = :lectureId",
+                            Collections.singletonMap("lectureId", lectureId), lectureRowMapper)
             );
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException(Error.NOT_FOUND_LECTURE_EXCEPTION, Error.NOT_FOUND_LECTURE_EXCEPTION.getMessage());
@@ -55,10 +55,10 @@ public class LectureRepositoryImpl implements LectureRepository {
     }
 
     @Override
-    public List<Lecture> findByTutorId(UUID tutorId) {
+    public List<Lecture> findByTutorId(Long tutorId) {
         return jdbcTemplate.query(
-                "SELECT * FROM lecture WHERE tutor_id = UUID_TO_BIN(:tutorId)",
-                Collections.singletonMap("tutorId", tutorId.toString().getBytes()),
+                "SELECT * FROM lecture WHERE tutor_id = :tutorId",
+                Collections.singletonMap("tutorId", tutorId),
                 lectureRowMapper
         );
     }
