@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/matching-lecture")
+@RequestMapping("api/v1/matching-lecture")
 public class MatchingLectureController {
 
     private final MatchingLectureService matchingLectureService;
